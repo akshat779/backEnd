@@ -1,7 +1,7 @@
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {User} from "./../models/user.models.js"
-import { uploadOnCloudinary } from "./../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "./../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
@@ -216,7 +216,7 @@ const updateAccountDetails = asyncHandler(async(req,res)=>{
     if(!fullname || !email){
         throw new ApiError(400,"Please provide with a fullname or email atleast")
     }
-    const user = User.findByIdandUpdate(req.user?._id,
+    const user = await User.findByIdandUpdate(req.user?._id,
         {
             $set:{
                 fullname,
@@ -232,15 +232,23 @@ const updateAccountDetails = asyncHandler(async(req,res)=>{
 })
 
 const updateUserAvatar = asyncHandler(async(req,res)=>{
-    const avatarLocalPath = req.file?.path;
+    // console.log(req.files?.avatar[0].path)
+    const avatarLocalPath =req.files?.avatar[0].path
     if(!avatarLocalPath){
         throw new ApiError(400,"Please provide an avatar")
     }
+    // console.log(req.user._conditions._id)
+    const oldImageToBeDeleted = await User.findById(req.user?._conditions?._id);
+    // console.log(oldImageToBeDeleted.avatar)
+    if(!oldImageToBeDeleted){
+        throw new ApiError(400,"No avatar to delete")
+    }
+    
     const avatarUrl = await uploadOnCloudinary(avatarLocalPath);
     if(!avatarUrl.url){
         throw new ApiError(400,"Error while uploading avatar")
     }
-    const user = await User.findByIdAndUpdate(req.user?._id,
+    const user = await User.findByIdAndUpdate(req.user?._conditions?._id,
         {
             $set:{
                 avatar:avatarUrl.url
@@ -250,17 +258,25 @@ const updateUserAvatar = asyncHandler(async(req,res)=>{
             new:true
         }
     )
+    
+    await deleteFromCloudinary(oldImageToBeDeleted.avatar);
     return res.status(200)
     .json(new ApiResponse(200,user,"Avatar Updated Successfully"))
+    
 
  })
 
 const updateUserCoverImage = asyncHandler(async(req,res)=>{
     const localCoverImage = req.file?.path
+    
+    const oldImageToBeDeleted = await User.findById(req.user?._id).select("coverImage");
+    if(!oldImageToBeDeleted){
+        throw new ApiError(400,"No avatar to delete")
+    }
     if(!localCoverImage){
         throw new ApiError(400,"Please provide a cover Image");
     }
-    const coverImageUrl = await uploadOnCloudinary(localCOverImage)
+    const coverImageUrl = await uploadOnCloudinary(localCoverImage)
     if(!coverImageUrl.url){
         throw new ApiError(400,"Error while uploading cover Image")
     }
@@ -272,6 +288,7 @@ const updateUserCoverImage = asyncHandler(async(req,res)=>{
         },
         {new:true}
     )
+    await deleteFromCloudinary(oldImageToBeDeleted);
     return res.status(200)
     .json(new ApiResponse(200,user,"Cover Image Updated Successfully"))
 })

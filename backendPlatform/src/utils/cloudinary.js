@@ -1,4 +1,5 @@
 import {v2 as cloudinary} from "cloudinary"
+import {ApiError} from "../utils/ApiError.js"
 import fs from "fs" 
 
 cloudinary.config({
@@ -18,6 +19,7 @@ const uploadOnCloudinary = async (localFilePath) => {
         })
         // console.log("Uploaded successfully", response.url);
         fs.unlinkSync(localFilePath);
+        // console.log(response.public_id)
         return response
     }
     catch(error){
@@ -26,4 +28,15 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
-export {uploadOnCloudinary}
+const deleteFromCloudinary = async(imageurl) => {
+    try{
+        // console.log(imageurl)
+        const publicId = imageurl.split("/").pop().split(".")[0]
+        await cloudinary.uploader.destroy(publicId)
+    }
+    catch(error){
+        throw new ApiError(500,error.message)
+    }
+}
+
+export {uploadOnCloudinary,deleteFromCloudinary}
