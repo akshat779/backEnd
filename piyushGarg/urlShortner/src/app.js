@@ -1,6 +1,10 @@
 import express from 'express'
 import cors from 'cors' 
 import cookieParser from 'cookie-parser'
+import path from 'path'
+import { URL } from './models/url.models.js'
+
+
 
 
 const app = express()
@@ -19,9 +23,12 @@ app.use(express.urlencoded({
 
 app.use(express.static("public"))
 app.use(cookieParser())
-
+app.set("view engine","ejs")
+app.set("views",path.resolve("./src/views"))
 import urlRouter from './routes/url.route.js'
+import staticRouter from './routes/staticRouter.route.js'
 
 app.use("/url" ,urlRouter)
+app.use("/home",staticRouter)
 
 export {app}

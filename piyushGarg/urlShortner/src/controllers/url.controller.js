@@ -16,11 +16,11 @@ const createShortUrl = asyncHandler(async (req, res) => {
         visitHistory: []
     });
 
-    return res.status(200).json({
-        success: true,
-        shortId: shortID
-    })
-
+    // return res.render("home",{
+    //     shortID
+    // })
+    res.status(200).json({message:"Short url created",shortID})
+    
 
 })
 
@@ -45,7 +45,22 @@ const getShortUrl = asyncHandler(async (req, res) => {
     res.status(200).redirect(redirectval);
 })
 
+const analytics = asyncHandler(async(req,res)=>{
+    const shorturl = req.params.id;
+    const entry = await URL.findOne(
+        {
+            shortId:shorturl
+        }
+    )
+    const output = {
+        noOfVisits: entry.visitHistory.length,
+        visits: entry.visitHistory
+    }
+    return res.status(200).json(output);
+})
+
 export {
     createShortUrl,
-    getShortUrl
+    getShortUrl,
+    analytics
 }

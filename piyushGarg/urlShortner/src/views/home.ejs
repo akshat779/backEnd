@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>URL Shortner</h1>
+
+
+    <% if(locals.shortID) { %>
+        <p> URL generated : http://localhost:8001/url/<%= shortID %>
+        </p>
+    <%}%>
+            <form action="/url" method="post">
+                <label>Enter your URL</label>
+                <input type="text" name="url" placeholder="Enter URL">
+                <button type="submit">Shorten</button>
+            </form>
+
+    <div>
+        <h2>URLs</h2>
+        <!-- <ul>
+            <% allurls.forEach(url => { %>
+                <li>
+                    <a href="http://localhost:8001/url/<%=url.shortId%>"> http://localhost:8001/url/<%=url.shortId%></a>
+                </li>
+            <% }) %>
+        </ul> -->
+        <%if(locals.allurls) {%>
+            <table>
+                <thead>
+                    <th>S.no</th>
+                    <th>short id</th>
+                    <th>redirect</th>
+                    <th>Clicks</th>
+                </thead>
+                <tbody>
+                    <% allurls.forEach((url,index) => { %>
+                        <tr>
+                            <td><%= index+1 %></td>
+                            <td><a href="http://localhost:8001/url/<%= url.shortId %>">http://localhost:8001/url/<%= url.shortId %></a></td>
+                            <td><%= url.redirectUrl %></td>
+                            <td><%= url.visitHistory.length %></td>
+                        </tr>
+                        <% }) %>
+
+                </tbody>
+            </table>
+            <% } %>
+    </div>
+</body>
+
+</html>
