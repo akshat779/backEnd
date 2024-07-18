@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors' 
 import cookieParser from 'cookie-parser'
 import path from 'path'
-import { URL } from './models/url.models.js'
+import {restrictToLoginUserOnly,checkAuth} from './middlewares/auth.middlewares.js'
 
 
 
@@ -27,8 +27,10 @@ app.set("view engine","ejs")
 app.set("views",path.resolve("./src/views"))
 import urlRouter from './routes/url.route.js'
 import staticRouter from './routes/staticRouter.route.js'
+import userRouter from './routes/user.route.js'
 
-app.use("/url" ,urlRouter)
-app.use("/home",staticRouter)
+app.use("/url" ,restrictToLoginUserOnly,urlRouter)
+app.use("/home",checkAuth,staticRouter)
+app.use("/user",checkAuth,userRouter)
 
 export {app}

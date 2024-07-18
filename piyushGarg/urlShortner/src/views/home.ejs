@@ -15,12 +15,6 @@
 
 <body>
     <h1>URL Shortner</h1>
-
-
-    <% if(locals.shortID) { %>
-        <p> URL generated : http://localhost:8001/url/<%= shortID %>
-        </p>
-    <%}%>
             <form action="/url" method="post">
                 <label>Enter your URL</label>
                 <input type="text" name="url" placeholder="Enter URL">
@@ -29,34 +23,25 @@
 
     <div>
         <h2>URLs</h2>
-        <!-- <ul>
-            <% allurls.forEach(url => { %>
-                <li>
-                    <a href="http://localhost:8001/url/<%=url.shortId%>"> http://localhost:8001/url/<%=url.shortId%></a>
-                </li>
-            <% }) %>
-        </ul> -->
-        <%if(locals.allurls) {%>
-            <table>
-                <thead>
-                    <th>S.no</th>
-                    <th>short id</th>
-                    <th>redirect</th>
-                    <th>Clicks</th>
-                </thead>
-                <tbody>
-                    <% allurls.forEach((url,index) => { %>
-                        <tr>
-                            <td><%= index+1 %></td>
-                            <td><a href="http://localhost:8001/url/<%= url.shortId %>">http://localhost:8001/url/<%= url.shortId %></a></td>
-                            <td><%= url.redirectUrl %></td>
-                            <td><%= url.visitHistory.length %></td>
-                        </tr>
-                        <% }) %>
-
-                </tbody>
-            </table>
-            <% } %>
+        <table>
+            <thead>
+                <th>S.no</th>
+                <th>Redirect Url</th>
+                <th>Shortened Url</th>
+                <th>Visits</th>
+            </thead>
+            <tbody>
+                <% allurls.forEach((url, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= url.redirectUrl %></td>
+                        <td><a href="http://localhost:8001/url/<%= url.shortId %>">http://localhost:8001/url/<%= url.shortId %></a></td>
+                        <td><%= url.visitHistory.length %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        
     </div>
 </body>
 

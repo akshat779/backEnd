@@ -1,21 +1,28 @@
-import mongoose ,{Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import  {User} from "./users.models.js"
 
 const urlSchema = new Schema({
-    shortId:{
-        type:String,
-        required:true,
-        unique:true
+    shortId: {
+        type: String,
+        required: true,
+        unique: true
     },
-    redirectUrl:{
-        type:String,
-        required:true
+    redirectUrl: {
+        type: String,
+        required: true
     },
-    visitHistory:[{
-        timeStamp:{
-            type:Date 
+    visitHistory: [{
+        timeStamp: {
+            type: Date
         }
-    }]
+    }],
 
-},{timestamps:true})
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: User,
+    }
 
-export const URL = mongoose.model("Url",urlSchema)
+
+}, { timestamps: true })
+
+export const URL = mongoose.model("Url", urlSchema)
