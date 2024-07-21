@@ -9,6 +9,10 @@ router.get("/signup",(req,res) => {
     return res.render("signup");
 });
 
+router.get("/home",(req,res)=>{
+    return res.render("home");
+})
+
 router.post("/signup",createUser);
 
 router.post("/signin",signInUser)
